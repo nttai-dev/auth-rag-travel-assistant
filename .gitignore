@@ -1,0 +1,27 @@
+# Secrets and environment config
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Python and virtual environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local reference materials and agent scratch files (not submitted)
+.superpowers/
+docs/superpowers/plans/
+lab03_firebase_streamlit/
+*.pdf
+\[W4\]*.ipynb
