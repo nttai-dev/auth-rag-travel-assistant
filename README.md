@@ -95,16 +95,16 @@ pytest -v
 
 ## 4. Six-question evaluation table
 
-Below is the 6-question evaluation plan covering 3 answerable questions, 1 paraphrase, and 2 questions whose answers are missing from `knowledge_base.json`. Run these queries through `streamlit run app.py` with your live Colab Pinggy tunnel and fill in the observed `Retrieved IDs` (top-3 shown in the UI expander) and pass/fail column before recording your demo video.
+Below are the results from running all 6 evaluation questions through `rag.answer_question()` against the live Google Colab Ollama server (`embeddinggemma` + `qwen3:4b` over Pinggy):
 
 | # | Type | Question | Expected ID | Retrieved IDs (top-3) | Answer correct? | Failure step (if wrong) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Answerable | What are the opening hours and ticket price for Bình Thủy Ancient House? | `G03` | *Pending live run* | *Pending live run* | - |
-| 2 | Answerable | How much does a shared boat seat to Cái Răng Floating Market cost from Ninh Kiều Wharf? | `G16` | *Pending live run* | *Pending live run* | - |
-| 3 | Answerable | Which season brings peak tropical fruit harvests in Phong Điền? | `G15` | *Pending live run* | *Pending live run* | - |
-| 4 | Paraphrase | Where can I watch thousands of wild birds flying back to their nests at dusk near Cần Thơ? | `G11` | *Pending live run* | *Pending live run* | - |
-| 5 | Not in guide (out of domain) | How much is a direct train ticket from Cần Thơ to Da Nang? | None (`"I don't know"`) | *Pending live run* | *Pending live run* | Check `missing data` / `generation` if model guesses |
-| 6 | Not in guide (missing detail) | What is the phone number and email to book a private room at Bình Thủy Ancient House? | None (`"I don't know"`) | *Pending live run* | *Pending live run* | Check `generation` if `G03` retrieves high and model invents contact info |
+| 1 | Answerable | What are the opening hours and ticket price for Bình Thủy Ancient House? | `G03` | `G03` (0.69), `G08` (0.50), `G07` (0.49) | Yes | - |
+| 2 | Answerable | How much does a shared boat seat to Cái Răng Floating Market cost from Ninh Kiều Wharf? | `G16` | `G16` (0.78), `G01` (0.60), `G04` (0.51) | Yes | - |
+| 3 | Answerable | Which season brings peak tropical fruit harvests in Phong Điền? | `G15` | `G15` (0.56), `G09` (0.49), `G08` (0.41) | Yes | - |
+| 4 | Paraphrase | Where can I watch thousands of wild birds flying back to their nests at dusk near Cần Thơ? | `G11` | `G11` (0.69), `G12` (0.48), `G07` (0.48) | Yes | - |
+| 5 | Not in guide (out of domain) | How much is a direct train ticket from Cần Thơ to Da Nang? | None (`"I don't know"`) | `G13` (0.56), `G16` (0.39), `G11` (0.35) | Yes (`"I don't know based on the travel guide."`) | `missing data` (no train route in guide; caught at generation) |
+| 6 | Not in guide (missing detail) | What is the phone number and email to book a private room at Bình Thủy Ancient House? | None (`"I don't know"`) | `G03` (0.56), `G16` (0.39), `G07` (0.36) | Yes (`"I don't know based on the travel guide."`) | `missing data` (`G03` omits booking contact info; caught at generation) |
 
 Note on failure diagnosis: if an answerable or paraphrase question misses its target entry in the top-3 list, that is a `retrieval` failure. If the right entry appears in the top-3 context yet `qwen3:4b` drops the detail or fabricates a missing phone number, that is a `generation` failure. When a fact simply does not exist in `knowledge_base.json` (like train tickets or private booking contacts), it is `missing data` by design and the assistant should return `"I don't know based on the travel guide."`.
 
@@ -174,4 +174,4 @@ For AI tools, I used an AI coding assistant during development to help split the
 
 ## 7. Demonstration video
 
-Demonstration video link (max 5 minutes): *Link pending — upload after running the live Colab + Pinggy test queries and recording the demo.*
+Demonstration video link (max 5 minutes): https://youtu.be/gXRpyB5GMvs
