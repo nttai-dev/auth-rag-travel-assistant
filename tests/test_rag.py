@@ -118,6 +118,22 @@ def test_generate_answer_strips_think_tags_and_normalizes_url():
         assert mock_post.call_args.kwargs["json"]["think"] is False
 
 
+def test_generate_answer_strips_orphan_closing_think_tag():
+    mock_resp = MagicMock()
+    mock_resp.ok = True
+    mock_resp.json.return_value = {
+        "message": {"content": "Okay, let's check [G03].\n</think>\n\nTickets cost 20,000 VND [G03]."}
+    }
+    retrieved = [{"entry": SAMPLE_ENTRIES[1], "score": 0.85}]
+    with patch("rag.requests.post", return_value=mock_resp):
+        ans = generate_answer(
+            "How much is Binh Thuy ticket?",
+            retrieved,
+            base_url="https://example.pinggy.link",
+        )
+        assert ans == "Tickets cost 20,000 VND [G03]."
+
+
 def test_generate_answer_raises_rag_error_on_blank_url_or_connection_failure():
     retrieved = [{"entry": SAMPLE_ENTRIES[0], "score": 0.9}]
     with pytest.raises(RAGError, match="OLLAMA_BASE_URL"):

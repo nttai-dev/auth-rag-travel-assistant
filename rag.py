@@ -169,6 +169,15 @@ def build_context(retrieved: list[dict[str, Any]]) -> str:
     return "\n\n".join(blocks)
 
 
+def _strip_thinking(raw_content: str) -> str:
+    """Remove model reasoning blocks, including templates that omit the opening <think> tag."""
+    cleaned = re.sub(r"<think>[\s\S]*?</think>", "", str(raw_content))
+    # Some Ollama qwen3 templates prefill <think> in the prompt, leaving only a closing </think>.
+    if "</think>" in cleaned:
+        cleaned = cleaned.rsplit("</think>", 1)[-1]
+    return re.sub(r"<think>[\s\S]*$", "", cleaned).strip()
+
+
 def generate_answer(
     question: str,
     retrieved: list[dict[str, Any]],
@@ -200,9 +209,7 @@ def generate_answer(
     )
     message = data.get("message")
     raw_content = message.get("content", "") if isinstance(message, dict) else ""
-    # Strip <think> blocks in case an older Ollama build ignores `"think": False`.
-    cleaned = re.sub(r"<think>[\s\S]*?</think>", "", str(raw_content)).strip()
-    return cleaned or IDK_RESPONSE
+    return _strip_thinking(raw_content) or IDK_RESPONSE
 
 
 def answer_question(
