@@ -12,7 +12,7 @@ REQUEST_TIMEOUT = 15
 _AUTH_ERROR_MESSAGES: tuple[tuple[tuple[str, ...], str], ...] = (
     (("EMAIL_EXISTS",), "That email is already registered. Choose Sign in instead."),
     (
-        ("OPERATION_NOT_ALLOWED",),
+        ("OPERATION_NOT_ALLOWED", "CONFIGURATION_NOT_FOUND"),
         "Enable Email/Password in Firebase Console > Authentication > Sign-in method.",
     ),
     (

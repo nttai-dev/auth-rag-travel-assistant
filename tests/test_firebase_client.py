@@ -67,6 +67,18 @@ def test_create_account_maps_existing_email_error():
             create_account("student@hcmus.edu.vn", "password123")
 
 
+def test_sign_in_maps_unconfigured_auth_error():
+    mock_resp = MagicMock()
+    mock_resp.status_code = 400
+    mock_resp.ok = False
+    mock_resp.json.return_value = {"error": {"message": "CONFIGURATION_NOT_FOUND"}}
+    with patch("firebase_client.FIREBASE_API_KEY", "fake-key"), \
+         patch("firebase_client.FIREBASE_PROJECT_ID", "demo-proj"), \
+         patch("firebase_client.requests.request", return_value=mock_resp):
+        with pytest.raises(FirebaseError, match="Enable Email/Password"):
+            sign_in("student@hcmus.edu.vn", "password123")
+
+
 def test_sign_in_handles_network_exception_without_leaking_key():
     with patch("firebase_client.FIREBASE_API_KEY", "super-secret-key"), \
          patch("firebase_client.FIREBASE_PROJECT_ID", "demo-proj"), \
